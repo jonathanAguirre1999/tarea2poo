@@ -1,12 +1,16 @@
-package uni1a;
+package ups.poo.logica;
 
-public abstract class ContenidoAudiovisual {
+public abstract class ContenidoAudiovisual implements IConsultable, IModificable {
     private static int contar = 0;
     private String titulo;
     private int duracionEnMinutos;
     private String genero;
     private int id;
-
+    
+    //constructores
+    public ContenidoAudiovisual() {
+    }
+    
     public ContenidoAudiovisual(String titulo, int duracionEnMinutos, String genero) {
         this.id = contar++;
         this.titulo = titulo;
@@ -46,5 +50,4 @@ public abstract class ContenidoAudiovisual {
         return id;
     }
     
-    public abstract void mostrarDetalles();
 }
