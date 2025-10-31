@@ -10,7 +10,7 @@ public class MainAudioVisual {
 		System.out.println("\nDATOS BASE CARGADOS CON EXITO\n");
 		GestorContenidos gestor = new GestorContenidos();
 		menuPrincipal(gestor);
-		System.out.println("Gracias por usar esta aplicación. Hasta la próxima!");
+		System.out.println("Gracias por usar esta aplicación. Hasta la próxima!!");
     }
 	
 	//metodo de inicializacion de menu de usuario
