@@ -13,7 +13,7 @@ public class Pelicula extends ContenidoAudiovisual {
     
     public Pelicula(String titulo, int duracionEnMinutos, String genero, String estudio) {
         super(titulo, duracionEnMinutos, genero);
-        this.estudio = estudio;
+        this.estudio = estudio.trim();
     }
 
     
@@ -23,7 +23,7 @@ public class Pelicula extends ContenidoAudiovisual {
     }
 
     public void setEstudio(String estudio) {
-        this.estudio = estudio;
+        this.estudio = estudio.trim();
     }
 
     public List<Actor> getActores() {
@@ -85,4 +85,43 @@ public class Pelicula extends ContenidoAudiovisual {
     		}
     	}
     }
+    
+  //metodo que elimina la referencia de actores de una pelicula
+  	//elimina un actor de la lista de actores asociadoss a esta pelicula
+  	public void eliminarActor(Actor actor) {
+  		if(this.actores != null) {
+  			this.actores.remove(actor);
+  		}
+  	}
+    
+  //metodos equals y hashcode para control de entradas duplicadas
+	@Override
+	public int hashCode() {
+		if(this.getId() != 0) {
+			return Objects.hash(this.getId());
+		}
+		return Objects.hash(this.getId(), this.getTitulo());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass()) 
+			return false;
+		Pelicula other = (Pelicula) obj;
+		
+		if(this.getId() != 0 && other.getId() != 0) {
+			return this.getId() == other.getId();
+		}
+		
+		return Objects.equals(this.getId(), other.getId()) && 
+				Objects.equals(this.getTitulo(), other.getTitulo());
+	}
+	
+	//tostring
+		@Override
+		public String toString() {
+			return this.mostrarDetallesCompletos();
+		}
 }

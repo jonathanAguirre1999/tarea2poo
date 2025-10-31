@@ -1,7 +1,10 @@
 package ups.poo.logica;
 
+import java.util.Objects;
+
 public class Investigador implements IConsultable, IModificable{
 	
+	private int id = 0;
 	private String nombre;
 	private String apellido;
 	private String areaEspecialidad;
@@ -13,21 +16,29 @@ public class Investigador implements IConsultable, IModificable{
 	}
 
 	public Investigador(String nombre, String apellido, String areaEspecialidad, String nacionalidad, Documental docum) {
-		this.nombre = nombre;
-		this.apellido = apellido;
-		this.areaEspecialidad = areaEspecialidad;
-		this.nacionalidad = nacionalidad;
+		this.nombre = nombre.trim();
+		this.apellido = apellido.trim();
+		this.areaEspecialidad = areaEspecialidad.trim();
+		this.nacionalidad = nacionalidad.trim();
 		this.docum = docum;
 	}
 	
 	
 	//getters y setters
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public String getNombre() {
 		return nombre;
 	}
 
 	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		this.nombre = nombre.trim();
 	}
 
 	public String getApellido() {
@@ -35,7 +46,7 @@ public class Investigador implements IConsultable, IModificable{
 	}
 
 	public void setApellido(String apellido) {
-		this.apellido = apellido;
+		this.apellido = apellido.trim();
 	}
 
 	public String getAreaEspecialidad() {
@@ -43,7 +54,7 @@ public class Investigador implements IConsultable, IModificable{
 	}
 
 	public void setAreaEspecialidad(String areaEspecialidad) {
-		this.areaEspecialidad = areaEspecialidad;
+		this.areaEspecialidad = areaEspecialidad.trim();
 	}
 
 	public String getNacionalidad() {
@@ -51,7 +62,7 @@ public class Investigador implements IConsultable, IModificable{
 	}
 
 	public void setNacionalidad(String nacionalidad) {
-		this.nacionalidad = nacionalidad;
+		this.nacionalidad = nacionalidad.trim();
 	}
 
 	public Documental getDocum() {
@@ -107,5 +118,34 @@ public class Investigador implements IConsultable, IModificable{
 		detalles.append("Documental: " + this.docum.getTitulo() + "\n");
 		return detalles.toString();
 	}
-			
+	
+	//metodos equals y hashcode para control de entradas duplicadas
+	@Override
+	public int hashCode() {
+		if(this.getId() != 0) {
+			return Objects.hash(this.getId());
+		}
+		return Objects.hash(this.getNombre(), this.getApellido());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass()) 
+			return false;
+		Investigador other = (Investigador) obj;
+		
+		if(this.getId() != 0 && other.getId() != 0) {
+			return this.getId() == other.getId();
+		}
+		
+		return Objects.equals(this.getNombre(), other.getNombre()) && Objects.equals(this.getApellido(), other.getApellido());
+	}
+	
+	//tostring
+		@Override
+		public String toString() {
+			return this.mostrarDetallesCompletos();
+		}
 }

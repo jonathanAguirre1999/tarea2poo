@@ -1,5 +1,7 @@
 package ups.poo.logica;
 
+import java.util.Objects;
+
 // Subclase Documental que extiende de ContenidoAudiovisual
 public class Documental extends ContenidoAudiovisual {
     private String tema;
@@ -12,7 +14,7 @@ public class Documental extends ContenidoAudiovisual {
     
     public Documental(String titulo, int duracionEnMinutos, String genero, String tema) {
         super(titulo, duracionEnMinutos, genero);
-        this.tema = tema;
+        this.tema = tema.trim();
     }
 
     //getters y setters
@@ -21,7 +23,7 @@ public class Documental extends ContenidoAudiovisual {
     }
 
     public void setTema(String tema) {
-        this.tema = tema;
+        this.tema = tema.trim();
     }
     
     public Investigador getInvesti() {
@@ -80,5 +82,35 @@ public class Documental extends ContenidoAudiovisual {
 		detalles.append("Investigador a cargo: " + this.getInvesti() + "\n");
 		return detalles.toString();
 	}
+
+	//metodos equals y hashcode para control de entradas duplicadas
+	@Override
+	public int hashCode() {
+		if(this.getId() != 0) {
+			return Objects.hash(this.getId());
+		}
+		return Objects.hash(this.getTitulo(), this.getTema());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass()) 
+			return false;
+		Documental other = (Documental) obj;
+		
+		if(this.getId() != 0 && other.getId() != 0) {
+			return this.getId() == other.getId();
+		}
+		
+		return Objects.equals(this.getTitulo(), other.getTitulo()) && Objects.equals(this.getTema(), other.getTema());
+	}
+	
+	//tostring
+		@Override
+		public String toString() {
+			return this.mostrarDetallesCompletos();
+		}
 
 }

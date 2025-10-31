@@ -1,7 +1,6 @@
 package ups.poo.logica;
 
 public abstract class ContenidoAudiovisual implements IConsultable, IModificable {
-    private static int contar = 0;
     private String titulo;
     private int duracionEnMinutos;
     private String genero;
@@ -12,22 +11,21 @@ public abstract class ContenidoAudiovisual implements IConsultable, IModificable
     }
     
     public ContenidoAudiovisual(String titulo, int duracionEnMinutos, String genero) {
-        this.id = contar++;
-        this.titulo = titulo;
+        this.id = 0;
+        this.titulo = titulo.trim();
         this.duracionEnMinutos = duracionEnMinutos;
-        this.genero = genero;
+        this.genero = genero.trim();
     }
 
-    // Getter y Setter para el campo 'titulo'
+    // getters y setters
     public String getTitulo() {
         return titulo;
     }
 
     public void setTitulo(String titulo) {
-        this.titulo = titulo;
+        this.titulo = titulo.trim();
     }
 
-    // Getter y Setter para el campo 'duracionEnMinutos'
     public int getDuracionEnMinutos() {
         return duracionEnMinutos;
     }
@@ -36,18 +34,19 @@ public abstract class ContenidoAudiovisual implements IConsultable, IModificable
         this.duracionEnMinutos = duracionEnMinutos;
     }
 
-    // Getter y Setter para el campo 'genero'
     public String getGenero() {
         return genero;
     }
 
     public void setGenero(String genero) {
-        this.genero = genero;
+        this.genero = genero.trim();
     }
 
-    // Getter para el campo 'id' (no se proporciona el Setter ya que 'id' se asigna en el constructor y parece ser inmutable)
     public int getId() {
         return id;
     }
     
+    public void setId(int id) {
+    	this.id = id;
+    }
 }

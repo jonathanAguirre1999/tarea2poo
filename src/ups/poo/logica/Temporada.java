@@ -1,8 +1,10 @@
 package ups.poo.logica;
 import java.time.LocalDate; //libreria que permite usar fechas
+import java.util.Objects;
 
 public class Temporada implements IConsultable, IModificable{
 	
+	private int id = 0;
 	private int numTemporada;
 	private SerieDeTV serie; //relacion con la clase SerieDeTV
 	private String tituloTemporada;
@@ -18,13 +20,22 @@ public class Temporada implements IConsultable, IModificable{
 			LocalDate fechaEstreno) {
 		this.numTemporada = numTemporada;
 		this.serie = serie;
-		this.tituloTemporada = tituloTemporada;
+		this.tituloTemporada = tituloTemporada.trim();
 		this.cantidadCapitulos = cantidadCapitulos;
 		this.fechaEstreno = fechaEstreno;
 	}
 
 
 	//getters y setters
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public int getNumTemporada() {
 		return numTemporada;
 	}
@@ -51,7 +62,7 @@ public class Temporada implements IConsultable, IModificable{
 
 
 	public void setTituloTemporada(String tituloTemporada) {
-		this.tituloTemporada = tituloTemporada;
+		this.tituloTemporada = tituloTemporada.trim();
 	}
 
 
@@ -117,5 +128,37 @@ public class Temporada implements IConsultable, IModificable{
 		detalles.append("Serie: " + this.getSerie() + "\n");
 		return detalles.toString();
 	}
+	
+	//metodos equals y hashcode para control de entradas duplicadas
+		@Override
+		public int hashCode() {
+			if(this.getId() != 0) {
+				return Objects.hash(this.getId());
+			}
+			return Objects.hash(this.getNumTemporada(), this.getSerie().getId());
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null || getClass() != obj.getClass()) 
+				return false;
+			Temporada other = (Temporada) obj;
+			
+			if(this.getId() != 0 && other.getId() != 0) {
+				return this.getId() == other.getId();
+			}
+			
+			return Objects.equals(this.getNumTemporada(), other.getNumTemporada()) && 
+					Objects.equals(this.getSerie().getId(), other.getSerie().getId());
+		}
+
+		
+	//tostring
+		@Override
+		public String toString() {
+			return this.mostrarDetallesCompletos();
+		}
 
 }

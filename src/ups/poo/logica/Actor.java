@@ -3,49 +3,51 @@ import java.util.*;
 
 public class Actor implements IConsultable, IModificable{
 	
+	private int id = 0;
 	private String nombre;
 	private String apellido;
-	private String personajeInterpretado;
-	private String tipoPersonaje;
+	private String nacionalidad;
 	private List <Pelicula> peliculas = new ArrayList <> (); //relaciona la clase con Pelicula
 		
 	// constructores
 	public Actor() {
 	}
 	
-	public Actor(String nombre, String apellido, String personajeInterpretado, String tipoPersonaje) {
-		this.nombre = nombre;
-		this.apellido = apellido;
-		this.personajeInterpretado = personajeInterpretado;
-		this.tipoPersonaje = tipoPersonaje;
+	public Actor(String nombre, String apellido, String nacionalidad) {
+		this.nombre = nombre.trim();
+		this.apellido = apellido.trim();
+		this.nacionalidad = nacionalidad.trim();
 	}
 	
 
 	//lista de getters y setters
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public String getNombre() {
 		return nombre;
 	}
 
 	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		this.nombre = nombre.trim();
 	}
 	public String getApellido() {
 		return apellido;
 	}
 	public void setApellido(String apellido) {
-		this.apellido = apellido;
+		this.apellido = apellido.trim();
 	}
-	public String getPersonajeInterpretado() {
-		return personajeInterpretado;
+
+	public String getNacionalidad() {
+		return nacionalidad;
 	}
-	public void setPersonajeInterpretado(String personajeInterpretado) {
-		this.personajeInterpretado = personajeInterpretado;
-	}
-	public String getTipoPersonaje() {
-		return tipoPersonaje;
-	}
-	public void setTipoPersonaje(String tipoPersonaje) {
-		this.tipoPersonaje = tipoPersonaje;
+	public void setTipoPersonaje(String nacionalidad) {
+		this.nacionalidad = nacionalidad.trim();
 	}
 	public List <Pelicula> getPeliculas() {
 		return peliculas;
@@ -71,11 +73,6 @@ public class Actor implements IConsultable, IModificable{
 				this.setApellido((String) nuevoValor);
 				return true;
 			}
-		} else if("personajeinterpretado".equals(atributoMinus) || "personaje interpretado".equals(atributoMinus)) {
-			if(nuevoValor instanceof String) {
-				this.setPersonajeInterpretado((String) nuevoValor);
-				return true;
-			}
 		} else if("tipopersonaje".equals(atributoMinus) || "tipo personaje".equals(atributoMinus) || "tipo de personaje".equals(atributoMinus) 
 				|| "tipodepersonaje".equals(atributoMinus)) {
 			if(nuevoValor instanceof String) {
@@ -90,10 +87,10 @@ public class Actor implements IConsultable, IModificable{
 	public String mostrarDetallesCompletos() {
 		StringBuilder detalles = new StringBuilder();
 		detalles.append("DATOS DEL ACTOR\n");
+		detalles.append("ID: " + this.getId() + "\n");
 		detalles.append("Nombre: " + this.getNombre() + "\n");
 		detalles.append("Apellido: " + this.getApellido() + "\n");
-		detalles.append("Personaje Interpretado: " + this.getPersonajeInterpretado() + "\n");
-		detalles.append("Tipo de personaje: " + this.getTipoPersonaje() + "\n");
+		detalles.append("Nacionalidad: " + this.getNacionalidad() + "\n");
 		detalles.append("Número de peliculas en las que aparece: " + this.peliculas.size() + "\n");
 		return detalles.toString();
 	}
@@ -109,7 +106,44 @@ public class Actor implements IConsultable, IModificable{
 			}
 		}	
 	}
+
+	//metodo que elimina la referencia de peliculas de un actor
+	//elimina una pelicula de la lista de peliculas asociadas a este actor
+	public void eliminarPelicula(Pelicula peli) {
+		if(this.peliculas != null) {
+			this.peliculas.remove(peli);
+		}
+	}
 	
 	
+	//metodos equals y hashcode para control de entradas duplicadas
+	@Override
+	public int hashCode() {
+		if(this.id != 0) {
+			return Objects.hash(this.id);
+		}
+		return Objects.hash(this.apellido, this.nombre);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass()) 
+			return false;
+		Actor other = (Actor) obj;
+		
+		if(this.id != 0 && other.id != 0) {
+			return this.id == other.id;
+		}
+		
+		return Objects.equals(this.apellido, other.apellido) && Objects.equals(this.nombre, other.nombre);
+	}
+	
+	//tostring
+		@Override
+		public String toString() {
+			return this.mostrarDetallesCompletos();
+		}
 	
 }

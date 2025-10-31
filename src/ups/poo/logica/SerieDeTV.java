@@ -102,4 +102,44 @@ public class SerieDeTV extends ContenidoAudiovisual {
 			}
 		}
 	}
+	
+	//metodo que elimina la referencia de temporadas de una serie
+  	//elimina una temporada de la lista de temporadas asociadoss a esta serie
+  	public void eliminarTemporada(Temporada temporada) {
+  		if(this.tempo != null) {
+  			this.tempo.remove(temporada);
+  		}
+  	}
+	
+	//metodos equals y hashcode para control de entradas duplicadas
+	@Override
+	public int hashCode() {
+		if(this.getId() != 0) {
+			return Objects.hash(this.getId());
+		}
+		return Objects.hash(this.getAnioEstreno(), this.getTitulo());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass()) 
+			return false;
+		SerieDeTV other = (SerieDeTV) obj;
+				
+		if(this.getId() != 0 && other.getId() != 0) {
+					return this.getId() == other.getId();
+		}
+		
+		return Objects.equals(this.getAnioEstreno(), other.getAnioEstreno()) && 
+				Objects.equals(this.getTitulo(), other.getTitulo());
+	}
+	
+	//tostring
+		@Override
+		public String toString() {
+			return this.mostrarDetallesCompletos();
+		}
+			
 }
