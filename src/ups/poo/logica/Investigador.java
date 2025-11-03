@@ -33,6 +33,7 @@ public class Investigador implements IConsultable, IModificable{
 		this.id = id;
 	}
 	
+	
 	public String getNombre() {
 		return nombre;
 	}
@@ -41,6 +42,7 @@ public class Investigador implements IConsultable, IModificable{
 		this.nombre = nombre.trim();
 	}
 
+	
 	public String getApellido() {
 		return apellido;
 	}

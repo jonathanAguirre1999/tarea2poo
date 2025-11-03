@@ -27,6 +27,7 @@ public class Temporada implements IConsultable, IModificable{
 
 
 	//getters y setters
+
 	public int getId() {
 		return id;
 	}
@@ -55,8 +56,8 @@ public class Temporada implements IConsultable, IModificable{
 		this.serie = serie;
 	}
 
-
-	public String getTituloTemporada() {
+	
+	public String getTitulo() {
 		return tituloTemporada;
 	}
 
@@ -122,7 +123,7 @@ public class Temporada implements IConsultable, IModificable{
 		StringBuilder detalles = new StringBuilder();
 		detalles.append("DETALLES DE LA TEMPORADA\n");
 		detalles.append("Número de temporada: " + this.getNumTemporada() + "\n");
-		detalles.append("Título: " + this.getTituloTemporada() + "\n");
+		detalles.append("Título: " + this.getTitulo() + "\n");
 		detalles.append("Cantidad de capítulos: " + this.getCantidadCapitulos() + "\n");
 		detalles.append("Fecha de estreno: " + this.getFechaEstreno() + "\n");
 		detalles.append("Serie: " + this.getSerie() + "\n");

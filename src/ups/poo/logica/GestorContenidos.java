@@ -14,6 +14,8 @@ public class GestorContenidos implements IControlable{
     private List<Actor> actores = new ArrayList<>();
     private List<Investigador> investigadores = new ArrayList<>();
     private List<Temporada> temporadas = new ArrayList<>();
+    private List<VideoYoutube> videosYT = new ArrayList<>();
+    private List<VideoMusical> videosMusicales = new ArrayList<>();
 	
     //constructor, inicializa los datos base almacenados por defecto
     public GestorContenidos() {
@@ -68,7 +70,22 @@ public class GestorContenidos implements IControlable{
 	public void setTemporadas(List<Temporada> temporadas) {
 		this.temporadas = temporadas;
 	}
+	
+	public List<VideoYoutube> getVideosYT() {
+		return videosYT;
+	}
+
+	public void setVideosyt(List<VideoYoutube> videosYT) {
+		this.videosYT = videosYT;
+	}
     
+	public List<VideoMusical> getVideosMusicales() {
+		return videosMusicales;
+	}
+
+	public void setVideosMusicales(List<VideoMusical> videosMusicales) {
+		this.videosMusicales = videosMusicales;
+	}
     //generador de ID
     private int generarId() {
     	return id++;
@@ -133,6 +150,24 @@ public class GestorContenidos implements IControlable{
 				investigadores.add(nuevoInves);
 				return true;
 			}  
+		} else if(objeto instanceof VideoYoutube) {
+			VideoYoutube nuevoVideoYT= ((VideoYoutube) objeto);
+			if(!videosYT.contains(nuevoVideoYT)) {
+				if(nuevoVideoYT.getId() == 0) {
+					nuevoVideoYT.setId(generarId());
+				}
+				videosYT.add(nuevoVideoYT);
+				return true;
+			}  
+		} else if(objeto instanceof VideoMusical) {
+			VideoMusical nuevoVideoMusical = ((VideoMusical) objeto);
+			if(!videosMusicales.contains(nuevoVideoMusical)) {
+				if(nuevoVideoMusical.getId() == 0) {
+					nuevoVideoMusical.setId(generarId());
+				}
+				videosMusicales.add(nuevoVideoMusical);
+				return true;
+			}  
 		}
 		return false;	
 	}
@@ -165,6 +200,20 @@ public class GestorContenidos implements IControlable{
 				return docu;
 			}
 		}
+		
+		//busqueda de videos de youtube por titulo
+		for (VideoYoutube videoyt : videosYT) {
+			if(videoyt.getTitulo().toLowerCase().equals(tituloFormateado)) {
+				return videoyt;
+			}
+		}
+				
+		//busqueda de videos musicales por titulo
+		for (VideoMusical videoMusical: videosMusicales) {
+			if(videoMusical.getTitulo().toLowerCase().equals(tituloFormateado)) {
+				return videoMusical;
+			}
+		}
 		return null;
 	}
 
@@ -194,6 +243,10 @@ public class GestorContenidos implements IControlable{
 			return (List<T>) temporadas;
 		} else if(claseNom.equals(Investigador.class)) {
 			return (List<T>) investigadores;
+		} else if(claseNom.equals(VideoYoutube.class)) {
+			return (List<T>) videosYT;
+		}else if(claseNom.equals(VideoMusical.class)) {
+			return (List<T>) videosMusicales;
 		} else {
 			return new ArrayList <> ();
 		}
@@ -249,6 +302,21 @@ public class GestorContenidos implements IControlable{
 			investigadores.remove(eliminarInves);
 			return true;
 		}
+		
+		//para videos de youtube
+		VideoYoutube eliminarVideoYT = videosYT.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(eliminarVideoYT != null) {
+			videosYT.remove(eliminarVideoYT);
+			return true;
+		}
+		
+		//para videos musicales
+		VideoMusical eliminarVideoMusical = videosMusicales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(eliminarVideoMusical != null) {
+			videosMusicales.remove(eliminarVideoMusical);
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -266,7 +334,12 @@ public class GestorContenidos implements IControlable{
 		Temporada temporada1 = new Temporada (1, serie1, "Primera Temporada", 7, LocalDate.of(2008, 01, 20));
 		Temporada temporada2 = new Temporada (2, serie1, "Segunda Temporada", 13, LocalDate.of(2009, 03, 8));
 		Documental documental1 = new Documental ("Corea del Norte: Amarás al lider por sobre todas las cosas.", 51, "Política", "Comunismo");
+		Documental documental2 = new Documental ("El cazador de cocodrilos", 52, "Vida silvestre", "Reptiles");
 		Investigador investigador1 = new Investigador ("Jon", "Sistiaga", "Política", "Español", documental1);
+		Investigador investigador2 = new Investigador ("Steve", "Irwin", "Naturaleza", "Estadounidense", null);		
+		VideoYoutube videoYT1 = new VideoYoutube ("¿Por qué todos odian a Resident Evil 6?", 14, "Gaming", "El Reporte de W", 
+				"https://www.youtube.com/watch?v=bvM1YyIbl68&t=597s");
+		VideoMusical videoMusical1 = new VideoMusical ("Worldwide", 3, "Pop", "Big Time Rush", "Big Time Rush", 2011);
 		
 		//establecimiento de relaciones 
 		actor1.agregarPelicula(peli1);
@@ -306,7 +379,13 @@ public class GestorContenidos implements IControlable{
 		
 		//INVESTIGADOR - DOCUMENTAL
 		this.agregarNuevoObj(investigador1);
+		this.agregarNuevoObj(investigador2);
 		this.agregarNuevoObj(documental1);
+		this.agregarNuevoObj(documental2);
+		
+		//VIDEOS DE YT Y MUSICALES
+		this.agregarNuevoObj(videoYT1);
+		this.agregarNuevoObj(videoMusical1);
 	
 	}
 	
@@ -351,6 +430,11 @@ public class GestorContenidos implements IControlable{
 		}
 	}
 	
+	//wrapper
+	public boolean eliminarPorId(int id, String tipo) {
+		return elimObj(id);
+	}
+	
 	//buscar por ID
 	public Object buscarPorId(int id) {
 		
@@ -377,6 +461,14 @@ public class GestorContenidos implements IControlable{
 			
 		//investigadores
 		resultado = investigadores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		//videos yt
+		resultado = videosYT.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		//videos musicales
+		resultado = videosMusicales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
 		if(resultado != null) return resultado;
 		
 		return null;

@@ -1,0 +1,63 @@
+INSTRUCCIONES DE INSTALACIÓN Y EJECUCIÓN
+
+Este documento detalla los pasos necesarios para instalar y ejecutar el Sistema de Gestión de Contenido Audiovisual.
+
+1. Requisitos del Sistema
+
+Para ejecutar la aplicación correctamente, su sistema operativo debe contar con el entorno de ejecución de Java.
+
+1.1. Java Runtime Environment (JRE)
+
+Requisito: Debe tener instalado el Java Runtime Environment (JRE) versión 8 o superior.
+
+Verificación: Puede verificar si Java está instalado abriendo la terminal o Símbolo del Sistema y ejecutando:
+
+java -version
+
+
+Si el comando muestra la versión de Java, el requisito está cumplido.
+
+2. Instalación de la Aplicación
+
+La aplicación se distribuye como un único archivo JAR ejecutable, lo que simplifica el proceso de instalación.
+
+2.1. Archivo de Distribución
+
+Localice el archivo principal del proyecto:
+
+GESTOR DE CONTENIDO AUDIOVISUAL.jar (o el nombre que haya definido durante la exportación).
+
+2.2. Colocación
+
+Mueva el archivo GESTOR DE CONTENIDO AUDIOVISUAL.jar a la ubicación de su preferencia (ej. su Escritorio o una carpeta dedicada). No se necesitan archivos de librería adicionales, ya que están empaquetados dentro del JAR.
+
+3. Ejecución
+
+Existen dos métodos principales para iniciar la aplicación.
+
+Método A: Ejecución Directa (Recomendado)
+
+Navegue a la carpeta donde colocó el archivo GESTOR DE CONTENIDO AUDIOVISUAL.jar.
+
+Haga doble clic sobre el archivo.
+
+La interfaz gráfica de la aplicación debería iniciarse inmediatamente.
+
+Método B: Ejecución por Línea de Comandos
+
+Abra la terminal o Símbolo del Sistema.
+
+Navegue al directorio donde se encuentra el archivo JAR (usando el comando cd).
+
+Ejecute el siguiente comando:
+
+java -jar "GESTOR DE CONTENIDO AUDIOVISUAL.jar"
+
+
+4. Solución de Problemas
+
+Si la aplicación no se abre con doble clic:
+
+Problema: El sistema operativo no tiene la asociación de archivos .jar configurada correctamente.
+
+Solución: Use el Método B (ejecución por línea de comandos) para forzar la apertura con el JRE instalado. Si el error persiste, asegúrese de que el JRE está correctamente instalado y configurado en su PATH.
