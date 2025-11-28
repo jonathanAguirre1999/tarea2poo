@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class VideoMusical extends ContenidoAudiovisual {
 
+	private static final long serialVersionUID = 1L;
 	private String artista;
 	private String album;
 	private int anio;

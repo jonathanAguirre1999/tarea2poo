@@ -23,8 +23,8 @@ public class PanelMenuEliminar extends JPanel {
 
 	public PanelMenuEliminar(GestorContenidos gestor) {
 		this.gestor = gestor;
-		setBorder(new LineBorder(new Color(0, 0, 0)));
-        setBackground(new Color(121, 134, 203));
+		setBorder(new LineBorder(Color.BLACK));
+        setBackground(Estilos.COLOR_FONDO_OSCURO);
         
         this.setVisible(true);
         this.setSize(722, 546);
@@ -32,13 +32,13 @@ public class PanelMenuEliminar extends JPanel {
         
         JLabel lblTitulo = new JLabel("ELIMINAR OBJETOS");
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Segoe UI Black", Font.PLAIN, 18));
+        lblTitulo.setFont(Estilos.FUENTE_TITULO);
         lblTitulo.setBounds(267, 10, 198, 30);
         add(lblTitulo);
         
         JLabel lblDatoAEliminar = new JLabel("Seleccione el tipo de objeto a eliminar:");
         lblDatoAEliminar.setHorizontalAlignment(SwingConstants.LEFT);
-        lblDatoAEliminar.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
+        lblDatoAEliminar.setFont(Estilos.FUENTE_SUBTITULO);
         lblDatoAEliminar.setBounds(10, 46, 300, 30);
         add(lblDatoAEliminar);
         
@@ -49,14 +49,14 @@ public class PanelMenuEliminar extends JPanel {
         inicializarTabla();
         
         JPanel panelTablaContenedor = new JPanel();
-        panelTablaContenedor.setBackground(new Color(197, 202, 233));
+        panelTablaContenedor.setBackground(Estilos.COLOR_FONDO_CLARO);
         panelTablaContenedor.setBounds(10, 86, 702, 389); 
         panelTablaContenedor.setLayout(new BorderLayout());
         panelTablaContenedor.add(scPanelTabla, BorderLayout.CENTER);
         add(panelTablaContenedor);
 		
         btnEliminar = new JButton("ELIMINAR INFORMACION");
-        btnEliminar.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnEliminar.setFont(Estilos.FUENTE_BOTON);
         btnEliminar.setBounds(507, 485, 205, 27);
         btnEliminar.setEnabled(false);
         add(btnEliminar);
@@ -75,7 +75,7 @@ public class PanelMenuEliminar extends JPanel {
                 return false;
             }
         };
-        tablaObjetos.setBackground(new Color(197, 202, 233));
+        tablaObjetos.setBackground(Estilos.COLOR_FONDO_CLARO);
         tablaObjetos.setFillsViewportHeight(true);
         scPanelTabla = new JScrollPane(tablaObjetos);
     }
@@ -103,14 +103,14 @@ public class PanelMenuEliminar extends JPanel {
 	    
 	    
 	    List<?> listaObjetos = obtenerListaPorTipo(tipoSeleccionado);
-	    String[] nombresColumnas = obtenerNombresColumnas(tipoSeleccionado); 
+	    String[] nombresColumnas = TablaConfig.obtenerNombresColumnas(tipoSeleccionado); 
 	    
 	    modeloTabla.setColumnIdentifiers(nombresColumnas);
 	    modeloTabla.setRowCount(0);
 	
 	    if (listaObjetos != null && !listaObjetos.isEmpty()) {
 	        for (Object obj : listaObjetos) {
-	            Object[] fila = mapearObjetoAFila(obj, tipoSeleccionado); 
+	            Object[] fila = TablaConfig.mapearObjetoAFila(obj, tipoSeleccionado); 
 	            if (fila != null) {
 	                modeloTabla.addRow(fila);
 	            }
@@ -142,7 +142,7 @@ public class PanelMenuEliminar extends JPanel {
                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             
             if (confirmacion == JOptionPane.YES_OPTION) {
-                boolean confirmacionEliminacion = gestor.eliminarPorId(idObjeto, tipoSeleccionado); 
+                boolean confirmacionEliminacion = gestor.elimObj(idObjeto); 
                 
                 if (confirmacionEliminacion) {
                     JOptionPane.showMessageDialog(this, "Se ha eliminado el objeto y todas sus referencias", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -192,122 +192,6 @@ public class PanelMenuEliminar extends JPanel {
 	            return Collections.emptyList();
 	    }
 	    return gestor.obtenerTodos(claseAObtener);
-	}
-	
-	//obtiene los nombres de las columnas de las tablas
-	private String[] obtenerNombresColumnas(String tipo) {
-	    switch (tipo) {
-	        case "Peliculas":
-	            return new String[] {"ID", "Título", "Duración(min)", "Género", "Estudio"};
-	        case "Documentales":
-	            return new String[] {"ID", "Título", "Duración(min)", "Género", "Tema"};
-	        case "Series de TV":
-	            return new String[] {"ID", "Título", "Duración(min/capitulo)", "Género", "Año de estreno"};
-	        case "Actores":
-	            return new String[] {"ID", "Nombre", "Apellido", "Nacionalidad"};
-	        case "Temporadas":
-	            return new String[] {"ID", "Título", "Número de temporada", "Cantidad de Capítulos", "Fecha Estreno"};
-	        case "Investigadores":
-	            return new String[] {"ID", "Nombre", "Apellido", "Nacionalidad", "Area de especialidad"};
-	        case "Videos de Youtube":
-	            return new String[] {"ID", "Titulo", "Duracion(min)", "Género", "Canal", "Link"};
-	        case "Videos Musicales":
-	            return new String[] {"ID", "Título", "Duracion(min)", "Género", "Artista", "Album", "Año de lanzamiento"};
-	        default:
-	            return new String[] {"ID", "Objeto"};
-	    }
-	}
-	
-	//convierte los datos de los objetos en datos para la tabla
-	private Object[] mapearObjetoAFila(Object obj, String tipoEscogido) {
-	    if (obj == null) return null;
-	
-	    switch (tipoEscogido) {
-	        case "Peliculas":
-	            Pelicula p = (Pelicula) obj;
-	            return new Object[] {
-	                p.getId(), 
-	                p.getTitulo(), 
-	                p.getDuracionEnMinutos(),
-	                p.getGenero(), 
-	                p.getEstudio()
-	            };
-	            
-	        case "Documentales":
-	            Documental d = (Documental) obj;
-	            return new Object[] {
-	                d.getId(), 
-	                d.getTitulo(), 
-	                d.getDuracionEnMinutos(),
-	                d.getGenero(), 
-	                d.getTema()
-	            };
-	            
-	        case "Series de TV":
-	            SerieDeTV s = (SerieDeTV) obj;
-	            return new Object[] {
-	                s.getId(), 
-	                s.getTitulo(), 
-	                s.getDuracionEnMinutos(),
-	                s.getGenero(), 
-	                s.getAnioEstreno() 
-	            };
-	            
-	        case "Actores":
-	            Actor a = (Actor) obj;
-	            return new Object[] {
-	                a.getId(), 
-	                a.getNombre(), 
-	                a.getApellido(),
-	                a.getNacionalidad()
-	            };
-	            
-	        case "Temporadas":
-	            Temporada t = (Temporada) obj;
-	            return new Object[] {
-	                t.getId(), 
-	                t.getTitulo(),
-	                t.getNumTemporada(), 
-	                t.getCantidadCapitulos(), 
-	                t.getFechaEstreno()
-	            };
-	            
-	        case "Investigadores":
-	            Investigador i = (Investigador) obj;
-	            return new Object[] {
-	                i.getId(), 
-	                i.getNombre(), 
-	                i.getApellido(),
-	                i.getNacionalidad(), 
-	                i.getAreaEspecialidad()
-	            };
-	            
-	        case "Videos de Youtube":
-	            VideoYoutube yt = (VideoYoutube) obj;
-	            return new Object[] {
-	                yt.getId(), 
-	                yt.getTitulo(), 
-	                yt.getDuracionEnMinutos(),
-	                yt.getGenero(), 
-	                yt.getNombreCanal(), 
-	                yt.getLinkVideo()
-	            };
-	            
-	        case "Videos Musicales":
-	            VideoMusical vm = (VideoMusical) obj;
-	            return new Object[] {
-	                vm.getId(), 
-	                vm.getTitulo(), 
-	                vm.getDuracionEnMinutos(), 
-	                vm.getGenero(), 
-	                vm.getArtista(), 
-	                vm.getAlbum(),
-	                vm.getAnio()
-	            };
-	            
-	        default:
-	            return new Object[]{};
-	    }
 	}
 	
 }

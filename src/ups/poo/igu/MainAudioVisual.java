@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 public class MainAudioVisual {
 	public static void main(String[] args) {
 		GestorContenidos gestor = new GestorContenidos();
+
 		
 			EventQueue.invokeLater(new Runnable() {
 		public void run() {

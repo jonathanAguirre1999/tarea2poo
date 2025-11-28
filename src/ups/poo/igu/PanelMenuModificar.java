@@ -44,8 +44,8 @@ public class PanelMenuModificar extends JPanel {
 	
 	public PanelMenuModificar(GestorContenidos gestor) {
 		this.gestor = gestor;
-		setBorder(new LineBorder(new Color(0, 0, 0)));
-		setBackground(new Color(121, 134, 203));
+		setBorder(new LineBorder(Color.BLACK));
+		setBackground(Estilos.COLOR_FONDO_OSCURO);
 		
 		this.setVisible(true);
 		this.setSize(722, 546);
@@ -54,21 +54,21 @@ public class PanelMenuModificar extends JPanel {
 		
 		JLabel lblTitulo = new JLabel("MODIFICAR");
 		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitulo.setFont(new Font("Segoe UI Black", Font.PLAIN, 18));
+		lblTitulo.setFont(Estilos.FUENTE_TITULO);
 		lblTitulo.setBounds(267, 10, 198, 30);
 		add(lblTitulo);
 		
 		inicializarTabla();
 		
 		panelSuperior =  new JPanel();
-		panelSuperior.setBackground(new Color(197, 202, 233));
+		panelSuperior.setBackground(Estilos.COLOR_FONDO_CLARO);
 		panelSuperior.setBounds(10, 86, 702, 179);
 		panelSuperior.setLayout(new BorderLayout());
 		panelSuperior.add(scPanelTabla, BorderLayout.CENTER);
 		add(panelSuperior);
 		
 		panelInferior = new JPanel();
-		panelInferior.setBackground(new Color(197, 202, 233));
+		panelInferior.setBackground(Estilos.COLOR_FONDO_CLARO);
 		panelInferior.setBounds(10, 273, 702, 226);
 		panelInferior.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
 		add(panelInferior);
@@ -76,7 +76,7 @@ public class PanelMenuModificar extends JPanel {
 		
 		JLabel lblDatoAModificar = new JLabel("Lista de objetos a modificar:");
 		lblDatoAModificar.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDatoAModificar.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 16));
+		lblDatoAModificar.setFont(Estilos.FUENTE_SUBTITULO);
 		lblDatoAModificar.setBounds(10, 46, 209, 30);
 		add(lblDatoAModificar);
 		
@@ -85,7 +85,7 @@ public class PanelMenuModificar extends JPanel {
 		add(cbObjetosModificables);
 		
 		btnModificarAtributos = new JButton("MODIFICAR ATRIBUTOS");
-		btnModificarAtributos.setFont(new Font("Segoe UI", Font.BOLD, 12));
+		btnModificarAtributos.setFont(Estilos.FUENTE_BOTON);
 		btnModificarAtributos.setBounds(507, 509, 205, 27);
 		btnModificarAtributos.setEnabled(false);
 		add(btnModificarAtributos);
@@ -108,7 +108,7 @@ public class PanelMenuModificar extends JPanel {
 				}
 		};
 		tablaObjetos.setFillsViewportHeight(true);
-		tablaObjetos.setBackground(new Color(197, 202, 233));
+		tablaObjetos.setBackground(Estilos.COLOR_FONDO_CLARO);
 		scPanelTabla = new JScrollPane(tablaObjetos);
 	}
 	
@@ -140,14 +140,14 @@ public class PanelMenuModificar extends JPanel {
 	private void cargarTablaModificaciones() {
 		String tipoSeleccionado = (String) cbObjetosModificables.getSelectedItem();
 		List <?> listaObjetos = obtenerListaPorTipo(tipoSeleccionado);
-		String [] nombresColumnas = obtenerNombresColumnas(tipoSeleccionado);
+		String [] nombresColumnas = TablaConfig.obtenerNombresColumnas(tipoSeleccionado);
 		
 		modeloTabla.setColumnIdentifiers(nombresColumnas);
 		modeloTabla.setRowCount(0);
 		
 		if (listaObjetos != null && !listaObjetos.isEmpty()) {
 	        for (Object obj : listaObjetos) {
-	            Object [] fila = mapearObjetoAFila(obj, tipoSeleccionado); 
+	            Object [] fila = TablaConfig.mapearObjetoAFila(obj, tipoSeleccionado); 
 	            if (fila != null) {
 	                modeloTabla.addRow(fila);
 	            }
@@ -203,122 +203,6 @@ public class PanelMenuModificar extends JPanel {
 	            return Collections.emptyList();
 	    }
 	    return gestor.obtenerTodos(claseAObtener);
-	}
-	
-	//obtiene los nombres de las columnas de las tablas
-	private String[] obtenerNombresColumnas(String tipo) {
-	    switch (tipo) {
-	        case "Peliculas":
-	            return new String[] {"ID", "Título", "Duración(min)", "Género", "Estudio"};
-	        case "Documentales":
-	            return new String[] {"ID", "Título", "Duración(min)", "Género", "Tema"};
-	        case "Series de TV":
-	            return new String[] {"ID", "Título", "Duración(min/capitulo)", "Género", "Año de estreno"};
-	        case "Actores":
-	            return new String[] {"ID", "Nombre", "Apellido", "Nacionalidad"};
-	        case "Temporadas":
-	            return new String[] {"ID", "Título", "Número de temporada", "Cantidad de Capítulos", "Fecha Estreno"};
-	        case "Investigadores":
-	            return new String[] {"ID", "Nombre", "Apellido", "Nacionalidad", "Area de especialidad"};
-	        case "Videos de Youtube":
-	            return new String[] {"ID", "Titulo", "Duracion(min)", "Género", "Canal", "Link"};
-	        case "Videos Musicales":
-	            return new String[] {"ID", "Título", "Duracion(min)", "Género", "Artista", "Album", "Año de lanzamiento"};
-	        default:
-	            return new String[] {"ID", "Objeto"};
-	    }
-	}
-	
-	//convierte los datos de los objetos en datos para la tabla
-	private Object[] mapearObjetoAFila(Object obj, String tipoEscogido) {
-	    if (obj == null) return null;
-
-	    switch (tipoEscogido) {
-	        case "Peliculas":
-	            Pelicula p = (Pelicula) obj;
-	            return new Object[] {
-	                p.getId(), 
-	                p.getTitulo(), 
-	                p.getDuracionEnMinutos(),
-	                p.getGenero(), 
-	                p.getEstudio()
-	            };
-	            
-	        case "Documentales":
-	            Documental d = (Documental) obj;
-	            return new Object[] {
-	                d.getId(), 
-	                d.getTitulo(), 
-	                d.getDuracionEnMinutos(),
-	                d.getGenero(), 
-	                d.getTema()
-	            };
-	            
-	        case "Series de TV":
-	            SerieDeTV s = (SerieDeTV) obj;
-	            return new Object[] {
-	                s.getId(), 
-	                s.getTitulo(), 
-	                s.getDuracionEnMinutos(),
-	                s.getGenero(), 
-	                s.getAnioEstreno() 
-	            };
-	            
-	        case "Actores":
-	            Actor a = (Actor) obj;
-	            return new Object[] {
-	                a.getId(), 
-	                a.getNombre(), 
-	                a.getApellido(),
-	                a.getNacionalidad()
-	            };
-	            
-	        case "Temporadas":
-	            Temporada t = (Temporada) obj;
-	            return new Object[] {
-	                t.getId(), 
-	                t.getTitulo(),
-	                t.getNumTemporada(), 
-	                t.getCantidadCapitulos(), 
-	                t.getFechaEstreno()
-	            };
-	            
-	        case "Investigadores":
-	            Investigador i = (Investigador) obj;
-	            return new Object[] {
-	                i.getId(), 
-	                i.getNombre(), 
-	                i.getApellido(),
-	                i.getNacionalidad(), 
-	                i.getAreaEspecialidad()
-	            };
-	            
-	        case "Videos de Youtube":
-	            VideoYoutube yt = (VideoYoutube) obj;
-	            return new Object[] {
-	                yt.getId(), 
-	                yt.getTitulo(), 
-	                yt.getDuracionEnMinutos(),
-	                yt.getGenero(), 
-	                yt.getNombreCanal(), 
-	                yt.getLinkVideo()
-	            };
-	            
-	        case "Videos Musicales":
-	            VideoMusical vm = (VideoMusical) obj;
-	            return new Object[] {
-	                vm.getId(), 
-	                vm.getTitulo(), 
-	                vm.getDuracionEnMinutos(), 
-	                vm.getGenero(), 
-	                vm.getArtista(), 
-	                vm.getAlbum(),
-	                vm.getAnio()
-	            };
-	            
-	        default:
-	            return new Object[]{};
-	    }
 	}
 	
 	//carga los datos del objeto seleccionado

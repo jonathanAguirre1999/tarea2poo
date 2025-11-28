@@ -3,7 +3,8 @@ package ups.poo.logica;
 import java.util.Objects;
 
 public class VideoYoutube extends ContenidoAudiovisual {
-
+	
+	private static final long serialVersionUID = 1L;
 	private String nombreCanal;
 	private String linkVideo;
 	

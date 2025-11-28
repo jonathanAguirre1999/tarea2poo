@@ -1,8 +1,10 @@
 package ups.poo.logica;
+import java.io.Serializable;
 import java.util.*;
 
-public class Actor implements IConsultable, IModificable{
+public class Actor implements IConsultable, IModificable, Serializable{
 	
+	private static final long serialVersionUID = 1L;
 	private int id = 0;
 	private String nombre;
 	private String apellido;
@@ -21,10 +23,12 @@ public class Actor implements IConsultable, IModificable{
 	
 
 	//lista de getters y setters
+	@Override
 	public int getId() {
 		return id;
 	}
-
+	
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}

@@ -4,7 +4,9 @@ import java.util.*;
 
 // Subclase Pelicula que extiende de ContenidoAudiovisual
 public class Pelicula extends ContenidoAudiovisual {
-    private String estudio;
+    
+	private static final long serialVersionUID = 1L;
+	private String estudio;
     private List <Actor> actores = new ArrayList <> ();
     
     //constructores

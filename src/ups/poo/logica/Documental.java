@@ -4,7 +4,9 @@ import java.util.Objects;
 
 // Subclase Documental que extiende de ContenidoAudiovisual
 public class Documental extends ContenidoAudiovisual {
-    private String tema;
+    
+	private static final long serialVersionUID = 1L;
+	private String tema;
     private Investigador investi;
 
     //constructores

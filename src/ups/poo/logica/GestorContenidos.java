@@ -1,11 +1,16 @@
 package ups.poo.logica;
 
 import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.time.*;
 
 public class GestorContenidos implements IControlable{
+	
 	//asignacion de id global a todos los objetos
 	private static int id = 1;
+	
+	//constante para el archivo de datos iniciales
 	
 	//colecciones (funcionan como una simil base de datos)
 	private List<Pelicula> peliculas = new ArrayList<>();
@@ -16,13 +21,27 @@ public class GestorContenidos implements IControlable{
     private List<Temporada> temporadas = new ArrayList<>();
     private List<VideoYoutube> videosYT = new ArrayList<>();
     private List<VideoMusical> videosMusicales = new ArrayList<>();
+    private GestorPersistencia persistencia;
 	
     //constructor, inicializa los datos base almacenados por defecto
     public GestorContenidos() {
-    	inicializarDatosBase();
+    	this.persistencia = new GestorPersistencia();
+    	
+    	if(!persistencia.cargarEstado(this)) {
+    		inicializarDatosBase();
+    	}	
+    	    	
     }
     
     //getters y setters
+    public int getContadorID() {
+    	return id;
+    }
+    
+    public void setContadorID(int idGuardado) {
+    	id = idGuardado;
+    }
+    
     public List<Pelicula> getPeliculas() {
 		return peliculas;
 	}
@@ -93,85 +112,41 @@ public class GestorContenidos implements IControlable{
     
 	//METODOS IMPLEMENTADOS DE LA INTERFAZ
 
+//============================================AGREGA NUEVOS OBJETOS A LA COLECCION================================================
+    
 	//usado para agregar nuevos objetos
 	@Override
 	public <T> boolean agregarNuevoObj(T objeto) {
-		if(objeto instanceof Pelicula) {
-			Pelicula nuevaPeli = ((Pelicula) objeto);
-			if(!peliculas.contains(nuevaPeli)) {
-				if(nuevaPeli.getId() == 0) {
-					nuevaPeli.setId(generarId());
-				}
-				peliculas.add(nuevaPeli);
-				return true;
-			}
-		} else if(objeto instanceof SerieDeTV) {
-			SerieDeTV nuevaSerie = ((SerieDeTV) objeto);
-			if(!series.contains(nuevaSerie)) {
-				if(nuevaSerie.getId() == 0) {
-					nuevaSerie.setId(generarId());
-				}
-				series.add(nuevaSerie);
-				return true;
-			}
-		} else if(objeto instanceof Documental) {
-			Documental nuevoDocu = ((Documental) objeto);
-			if(!documentales.contains(nuevoDocu)) {
-				if(nuevoDocu.getId() == 0) {	
-					nuevoDocu.setId(generarId());
-				}
-				documentales.add(nuevoDocu);
-				return true;
-			}
-		} else if(objeto instanceof Actor) {
-			Actor nuevoActor = ((Actor) objeto);
-			if(!actores.contains(nuevoActor)) {
-				if(nuevoActor.getId() == 0) {
-					nuevoActor.setId(generarId());
-				}	
-				actores.add(nuevoActor);
-				return true;
-			}
-		} else if(objeto instanceof Temporada) {
-			Temporada nuevaTempo = ((Temporada) objeto);
-			if(!temporadas.contains(nuevaTempo)) {
-				if(nuevaTempo.getId() == 0) {
-					nuevaTempo.setId(generarId());
-				}
-				temporadas.add(nuevaTempo);
-				return true;
-			}
-		} else if(objeto instanceof Investigador) {
-			Investigador nuevoInves = ((Investigador) objeto);
-			if(!investigadores.contains(nuevoInves)) {
-				if(nuevoInves.getId() == 0) {
-					nuevoInves.setId(generarId());
-				}
-				investigadores.add(nuevoInves);
-				return true;
-			}  
-		} else if(objeto instanceof VideoYoutube) {
-			VideoYoutube nuevoVideoYT= ((VideoYoutube) objeto);
-			if(!videosYT.contains(nuevoVideoYT)) {
-				if(nuevoVideoYT.getId() == 0) {
-					nuevoVideoYT.setId(generarId());
-				}
-				videosYT.add(nuevoVideoYT);
-				return true;
-			}  
-		} else if(objeto instanceof VideoMusical) {
-			VideoMusical nuevoVideoMusical = ((VideoMusical) objeto);
-			if(!videosMusicales.contains(nuevoVideoMusical)) {
-				if(nuevoVideoMusical.getId() == 0) {
-					nuevoVideoMusical.setId(generarId());
-				}
-				videosMusicales.add(nuevoVideoMusical);
-				return true;
-			}  
-		}
+		
+		if(objeto instanceof Pelicula) return procesarAgregacion((Pelicula) objeto, peliculas);
+		if(objeto instanceof SerieDeTV) return procesarAgregacion((SerieDeTV) objeto, series);
+		if(objeto instanceof Documental) return procesarAgregacion((Documental) objeto, documentales);
+		if(objeto instanceof Actor) return procesarAgregacion((Actor) objeto, actores);
+		if(objeto instanceof Investigador) return procesarAgregacion((Investigador) objeto, investigadores);
+		if(objeto instanceof Temporada) return procesarAgregacion((Temporada) objeto, temporadas);
+		if(objeto instanceof VideoYoutube) return procesarAgregacion((VideoYoutube) objeto, videosYT);
+		if(objeto instanceof VideoMusical) return procesarAgregacion((VideoMusical) objeto, videosMusicales);
+		
 		return false;	
 	}
+	
+	//se encarga de procesar la agregacion del nuevo objeto agregado por el usuario
+	private <T extends IConsultable> boolean procesarAgregacion(T objeto, List<T> lista){
 		
+		if (!lista.contains(objeto)) {
+			
+			if(objeto.getId() == 0) {
+				objeto.setId(generarId());
+			}
+			
+			lista.add(objeto);
+			return true;
+		}
+		return false;
+	}
+
+//=============================================================BUSQUEDAS===========================================================
+	
 	//busqueda por titulo de contenido audiovisual (cualquier tipo)
 	@Override
 	public ContenidoAudiovisual buscarPorTitulo(String titulo) {
@@ -251,74 +226,117 @@ public class GestorContenidos implements IControlable{
 			return new ArrayList <> ();
 		}
 	}
+	
+	//buscar por ID
+	public Object buscarPorId(int id) {
+		
+		//peliculas
+		Object resultado;
+		resultado = peliculas.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		//actores
+		resultado = actores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+	
+		//series
+		resultado = series.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		//temporadas
+		resultado = temporadas.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+				
+		//documentales
+		resultado = documentales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+			
+		//investigadores
+		resultado = investigadores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		//videos yt
+		resultado = videosYT.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		//videos musicales
+		resultado = videosMusicales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+		if(resultado != null) return resultado;
+		
+		return null;
+	}
 
+//=====================================================ELIMINACION DE OBJETOS===========================================================
 	//elimina un objeto basado en su ID unica
 	@Override
 	public boolean elimObj(int id) {
-		//para peliculas
-		Pelicula eliminarPeli = peliculas.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarPeli != null) {
-			borrarRelacion(eliminarPeli);
-			peliculas.remove(eliminarPeli);
-			return true;
-		}
 		
-		//para series
-		SerieDeTV eliminarSerie = series.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarSerie != null) {
-			borrarRelacion(eliminarSerie);
-			series.remove(eliminarSerie);
-			return true;
-		}
+		if(eliminarDeLista(peliculas, id)) return true;
+		if(eliminarDeLista(series, id)) return true;
+		if(eliminarDeLista(documentales, id)) return true;
+		if(eliminarDeLista(actores, id)) return true;
+		if(eliminarDeLista(investigadores, id)) return true;
+		if(eliminarDeLista(temporadas, id)) return true;
+		if(eliminarDeLista(videosYT, id)) return true;
+		if(eliminarDeLista(videosMusicales, id)) return true;
 		
-		//para documentales
-		Documental eliminarDocu = documentales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarDocu != null) {
-			borrarRelacion(eliminarDocu);
-			documentales.remove(eliminarDocu);
-			return true;
-		}
+		return false;
+	}
+	
+	//elimina el objeto de acuerdo a su tipo
+	private <T extends IConsultable> boolean eliminarDeLista(List <T> lista, int id) {
 		
-		//para actores
-		Actor eliminarActor = actores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarActor != null) {
-			borrarRelacion(eliminarActor);
-			actores.remove(eliminarActor);
-			return true;
-		}
+		T objetoParaEliminar = lista.stream().filter(o -> o.getId() == id).findFirst().orElse(null);
 		
-		//para temporadas
-		Temporada eliminarTempo= temporadas.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarTempo != null) {
-			borrarRelacion(eliminarTempo);
-			temporadas.remove(eliminarTempo);
-			return true;
-		}
-		
-		//para investigadores
-		Investigador eliminarInves = investigadores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarInves != null) {
-			borrarRelacion(eliminarInves);
-			investigadores.remove(eliminarInves);
-			return true;
-		}
-		
-		//para videos de youtube
-		VideoYoutube eliminarVideoYT = videosYT.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarVideoYT != null) {
-			videosYT.remove(eliminarVideoYT);
-			return true;
-		}
-		
-		//para videos musicales
-		VideoMusical eliminarVideoMusical = videosMusicales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(eliminarVideoMusical != null) {
-			videosMusicales.remove(eliminarVideoMusical);
+		if (objetoParaEliminar != null) {
+			borrarRelacion(objetoParaEliminar);
+			lista.remove(objetoParaEliminar);
 			return true;
 		}
 		
 		return false;
 	}
+	
+	//metodo auxiliar que borra las relaciones existentes de los objetos a ser eliminados
+		private <T> void borrarRelacion(T objetoEliminado) {
+			//determina si el objeto en cuestion existe o no
+			if(objetoEliminado == null) {
+				return;
+			}
+			
+			//se borraran las relaciones que el objeto a eliminar tenga con otras clases
+			if(objetoEliminado instanceof Pelicula peli) { //casteo implicito mediante pattern matching
+				for(Actor actor : peli.getActores()) {
+					actor.eliminarPelicula(peli);
+				}
+			} else if(objetoEliminado instanceof Actor actor) {
+				for(Pelicula peli : actor.getPeliculas()) {
+					peli.eliminarActor(actor);
+				}
+			} else if(objetoEliminado instanceof SerieDeTV serie) { //al eliminar una serie se eliminan sus temporadas del sistema tambien
+				List <Temporada> temporadasParaEliminar = new ArrayList<> (serie.getTempo()); //copia de lista de temporadas asociadas a la serie
+				this.temporadas.removeAll(temporadasParaEliminar) ; //elimina las temporadas asociadas a la serie
+				for(Temporada tempo : temporadasParaEliminar) {
+					tempo.setSerie(null); //ruptura de referencias
+				}
+			} else if(objetoEliminado instanceof Temporada tempo) {
+				SerieDeTV serie = tempo.getSerie();
+				if(serie != null) {
+					serie.eliminarTemporada(tempo);
+					tempo.setSerie(null);
+				}
+			} else if(objetoEliminado instanceof Documental docu) {
+				Investigador inves = docu.getInvesti();
+				if(inves != null) {
+					inves.setDocum(null);
+				}
+			} else if(objetoEliminado instanceof Investigador inves) {
+				Documental docu = inves.getDocum();
+				if(docu != null) {
+					docu.setInvesti(null);
+				}
+			}
+		}
 	
 	private void inicializarDatosBase() {
 		//1- creacion de objetos base para pruebas
@@ -389,92 +407,26 @@ public class GestorContenidos implements IControlable{
 	
 	}
 	
-	//metodo auxiliar que borra las relaciones existentes de los objetos a ser eliminados
-	private <T> void borrarRelacion(T objetoEliminado) {
-		//determina si el objeto en cuestion existe o no
-		if(objetoEliminado == null) {
-			return;
-		}
-		
-		//se borraran las relaciones que el objeto a eliminar tenga con otras clases
-		if(objetoEliminado instanceof Pelicula peli) { //casteo implicito mediante pattern matching
-			for(Actor actor : peli.getActores()) {
-				actor.eliminarPelicula(peli);
-			}
-		} else if(objetoEliminado instanceof Actor actor) {
-			for(Pelicula peli : actor.getPeliculas()) {
-				peli.eliminarActor(actor);
-			}
-		} else if(objetoEliminado instanceof SerieDeTV serie) { //al eliminar una serie se eliminan sus temporadas del sistema tambien
-			List <Temporada> temporadasParaEliminar = new ArrayList<> (serie.getTempo()); //copia de lista de temporadas asociadas a la serie
-			this.temporadas.removeAll(temporadasParaEliminar) ; //elimina las temporadas asociadas a la serie
-			for(Temporada tempo : temporadasParaEliminar) {
-				tempo.setSerie(null); //ruptura de referencias
-			}
-		} else if(objetoEliminado instanceof Temporada tempo) {
-			SerieDeTV serie = tempo.getSerie();
-			if(serie != null) {
-				serie.eliminarTemporada(tempo);
-				tempo.setSerie(null);
-			}
-		} else if(objetoEliminado instanceof Documental docu) {
-			Investigador inves = docu.getInvesti();
-			if(inves != null) {
-				inves.setDocum(null);
-			}
-		} else if(objetoEliminado instanceof Investigador inves) {
-			Documental docu = inves.getDocum();
-			if(docu != null) {
-				docu.setInvesti(null);
-			}
+	//EXPORTA UN REPORTE INDIVIDUAL PARA CADA OBJETO SELECCIONADO EN CONSULTAS
+	public boolean crearReporteIndividual(String rutaArchivo, String contenidoTexto) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaArchivo))){
+			bw.write(contenidoTexto);
+			return true;
+		} catch (Exception e) {
+			System.err.println("Error de escritura: " + e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
 	}
 	
-	//wrapper
-	public boolean eliminarPorId(int id, String tipo) {
-		return elimObj(id);
+	
+	//METODO QUE ACCESA A LA PERSISTENCIA PARA GUARADR LOS DATOS
+	public void guardarEstado() {
+	    if (this.persistencia != null) {
+	        this.persistencia.guardarEstado(this);
+	    } else {
+	        System.err.println("Error crítico: El servicio de persistencia no ha sido inicializado.");
+	    }
 	}
-	
-	//buscar por ID
-	public Object buscarPorId(int id) {
-		
-		//peliculas
-		Object resultado;
-		resultado = peliculas.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-		
-		//actores
-		resultado = actores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-	
-		//series
-		resultado = series.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-		
-		//temporadas
-		resultado = temporadas.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-				
-		//documentales
-		resultado = documentales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-			
-		//investigadores
-		resultado = investigadores.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-		
-		//videos yt
-		resultado = videosYT.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-		
-		//videos musicales
-		resultado = videosMusicales.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
-		if(resultado != null) return resultado;
-		
-		return null;
-	}
-	
-	
-	
 	
 }

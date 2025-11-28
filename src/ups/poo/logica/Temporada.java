@@ -1,9 +1,11 @@
 package ups.poo.logica;
+import java.io.Serializable;
 import java.time.LocalDate; //libreria que permite usar fechas
 import java.util.Objects;
 
-public class Temporada implements IConsultable, IModificable{
+public class Temporada implements IConsultable, IModificable, Serializable{
 	
+	private static final long serialVersionUID = 1L;
 	private int id = 0;
 	private int numTemporada;
 	private SerieDeTV serie; //relacion con la clase SerieDeTV
@@ -27,12 +29,12 @@ public class Temporada implements IConsultable, IModificable{
 
 
 	//getters y setters
-
+	@Override
 	public int getId() {
 		return id;
 	}
 
-
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}

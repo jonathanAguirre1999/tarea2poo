@@ -3,7 +3,9 @@ import java.util.*;
 
 // Subclase SerieDeTV que extiende de ContenidoAudiovisual
 public class SerieDeTV extends ContenidoAudiovisual {
-    private int anioEstreno;
+    
+	private static final long serialVersionUID = 1L;
+	private int anioEstreno;
     private boolean enEmision;
     private List <Temporada> tempo = new ArrayList <> ();
     

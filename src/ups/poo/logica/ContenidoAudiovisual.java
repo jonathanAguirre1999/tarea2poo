@@ -1,7 +1,10 @@
 package ups.poo.logica;
+import java.io.Serializable;
 
-public abstract class ContenidoAudiovisual implements IConsultable, IModificable {
-    private String titulo;
+public abstract class ContenidoAudiovisual implements IConsultable, IModificable, Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private String titulo;
     private int duracionEnMinutos;
     private String genero;
     private int id;
@@ -41,11 +44,13 @@ public abstract class ContenidoAudiovisual implements IConsultable, IModificable
     public void setGenero(String genero) {
         this.genero = genero.trim();
     }
-
+    
+    @Override
     public int getId() {
         return id;
     }
     
+    @Override
     public void setId(int id) {
     	this.id = id;
     }

@@ -1,27 +1,43 @@
 package ups.poo.igu;
 
-import ups.poo.logica.*;
-
-import javax.swing.*;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import java.time.*;
-import java.time.format.*;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.awt.Font;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.text.JTextComponent;
+
+import ups.poo.logica.Actor;
+import ups.poo.logica.Documental;
+import ups.poo.logica.GestorContenidos;
+import ups.poo.logica.Investigador;
+import ups.poo.logica.Pelicula;
+import ups.poo.logica.SerieDeTV;
+import ups.poo.logica.Temporada;
+import ups.poo.logica.VideoMusical;
+import ups.poo.logica.VideoYoutube;
 
 
 public class PanelMenuAdd extends JPanel {
@@ -35,10 +51,6 @@ public class PanelMenuAdd extends JPanel {
 	private JRadioButton rbtnEmisionSi;
 	private JRadioButton rbtnEmisionNo;
 	private ButtonGroup grupoEmision;
-	private List<Pelicula> peliculasGuardadas;
-	private List<Actor> actoresGuardados;
-	private JList<String> listaPeliculasDisponibles;
-	private JList<String> listaActoresDisponibles;
 	private List<SerieDeTV> seriesGuardadas;
 	private JComboBox <String> cbSeriesGuardadas;
 	private List<Documental> documentalesFiltrados;
@@ -46,9 +58,8 @@ public class PanelMenuAdd extends JPanel {
 	
 	public PanelMenuAdd(GestorContenidos gestor) {
 		this.gestor = gestor;
-		setBorder(new LineBorder(new Color(0, 0, 0)));
-		setBackground(new Color(121, 134, 203));
-		
+		setBorder(new LineBorder(Color.BLACK));
+		setBackground(Estilos.COLOR_FONDO_OSCURO);
 		this.setVisible(true);
 		this.setSize(722, 546);
 		setLayout(null);
@@ -56,7 +67,7 @@ public class PanelMenuAdd extends JPanel {
 		configSelectorTipo();
 		
 		JLabel lblTitulo = new JLabel("AGREGAR NUEVO");
-		lblTitulo.setFont(new Font("Segoe UI Black", Font.PLAIN, 18));
+		lblTitulo.setFont(Estilos.FUENTE_TITULO);
 		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitulo.setBounds(266, 10, 198, 30);
 		add(lblTitulo);
@@ -65,8 +76,8 @@ public class PanelMenuAdd extends JPanel {
 		add(this.cbTipoContenido);
 		
 		panelCamposAdd = new JPanel();
-		panelCamposAdd.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		panelCamposAdd.setBackground(new Color(197, 202, 233));
+		panelCamposAdd.setBorder(new LineBorder(Color.BLACK, 1, true));
+		panelCamposAdd.setBackground(Estilos.COLOR_FONDO_CLARO);
 		panelCamposAdd.setBounds(10, 77, 702, 459);
 		add(panelCamposAdd);
 		
@@ -93,7 +104,7 @@ public class PanelMenuAdd extends JPanel {
 				}		
 			}
 		});
-		btnAgregar.setFont(new Font("Segoe UI Black", Font.PLAIN, 12));
+		btnAgregar.setFont(Estilos.FUENTE_NORMAL);
 		btnAgregar.setBounds(559, 38, 131, 30);
 		add(btnAgregar);
 		
@@ -122,16 +133,16 @@ public class PanelMenuAdd extends JPanel {
 		//panel que contiene el titulo, el titulo cambiara dinamicamente de acuerdo a lo que se seleccione
 		JPanel contenedorTitulo = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		JLabel lblTitulo = new JLabel("AGREGAR " + tipoElegido.toString().toUpperCase());
-		lblTitulo.setFont(new Font("Segoe UI Black", Font.BOLD, 16));
+		lblTitulo.setFont(Estilos.FUENTE_SUBTITULO);
 		contenedorTitulo.add(lblTitulo);
-		contenedorTitulo.setBackground(new Color(197, 202, 233));
+		contenedorTitulo.setBackground(Estilos.COLOR_FONDO_CLARO);
 		panelCamposAdd.add(contenedorTitulo, BorderLayout.NORTH);
 		
 		//panel que contiene los campos a llenar para agregar el objeto
 		//cada objeto mostrara opciones de campos a llenar distintas
 		JPanel panelCentral = new JPanel();
 		panelCentral.setLayout(new FlowLayout(FlowLayout.CENTER));
-		panelCentral.setBackground(new Color(197, 202, 233));
+		panelCentral.setBackground(Estilos.COLOR_FONDO_CLARO);
 		panelCentral.add(Box.createRigidArea(new Dimension(0, 30)));
 		
 		if(tipoElegido.equals("Pelicula")) {
@@ -165,7 +176,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Titulo:"));
 		JTextField txtTitulo = new JTextField(30);
@@ -187,12 +198,6 @@ public class PanelMenuAdd extends JPanel {
 		formulario.add(txtEstudio);
 		camposFormulario.put("estudio", txtEstudio);
 		
-		formulario.add(new JLabel("Actores del reparto (elija uno o varios):"));
-		this.listaActoresDisponibles = desplegarListaActores(gestor);
-		JScrollPane scPanelActores = new JScrollPane(this.listaActoresDisponibles);
-		scPanelActores.setPreferredSize(new Dimension(30, 50));
-		formulario.add(scPanelActores);
-		
 		panelCentral.add(formulario);
 	}
 	
@@ -200,7 +205,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Titulo:"));
 		JTextField txtTitulo = new JTextField(30);
@@ -225,12 +230,12 @@ public class PanelMenuAdd extends JPanel {
 		formulario.add(new JLabel("¿La serie sigue en emisión?"));
 		JPanel opcionesEmision = new JPanel();
 		opcionesEmision.setLayout(new FlowLayout(FlowLayout.LEFT));
-		opcionesEmision.setBackground(new Color(197, 202, 233));
+		opcionesEmision.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		rbtnEmisionSi = new JRadioButton("Si");
 		rbtnEmisionNo = new JRadioButton("No");
-		rbtnEmisionSi.setBackground(new Color(197, 202, 233));
-		rbtnEmisionNo.setBackground(new Color(197, 202, 233));
+		rbtnEmisionSi.setBackground(Estilos.COLOR_FONDO_CLARO);
+		rbtnEmisionNo.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		grupoEmision = new ButtonGroup();
 		grupoEmision.add(rbtnEmisionSi);
@@ -248,7 +253,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Titulo:"));
 		JTextField txtTitulo = new JTextField(30);
@@ -277,7 +282,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Nombre:"));
 		JTextField txtNombre = new JTextField(30);
@@ -294,12 +299,6 @@ public class PanelMenuAdd extends JPanel {
 		formulario.add(txtNacionalidad);
 		camposFormulario.put("nacionalidad", txtNacionalidad);
 		
-		formulario.add(new JLabel("Películas en las que actua (elija una o varias):"));
-		this.listaPeliculasDisponibles = desplegarListaPeliculas(gestor);
-		JScrollPane scPanelPeliculas = new JScrollPane(this.listaPeliculasDisponibles);
-		scPanelPeliculas.setPreferredSize(new Dimension(30, 60));
-		formulario.add(scPanelPeliculas);
-		
 		panelCentral.add(formulario);
 	}
 	
@@ -307,16 +306,12 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Numero de temporada:"));
 		JTextField txtNumeroTemporada = new JTextField(10);
 		formulario.add(txtNumeroTemporada);
 		camposFormulario.put("numeroTemporada", txtNumeroTemporada);
-		
-		formulario.add(new JLabel("Serie a la que pertenece:"));
-		this.cbSeriesGuardadas = cbListaSeriesDisponibles(gestor);
-		formulario.add(this.cbSeriesGuardadas);
 		
 		formulario.add(new JLabel("Titulo de la temporada:"));
 		JTextField txtTitulo = new JTextField(30);
@@ -327,6 +322,10 @@ public class PanelMenuAdd extends JPanel {
 		JTextField txtCantCapitulos = new JTextField(10);
 		formulario.add(txtCantCapitulos);
 		camposFormulario.put("cantidadCapitulos", txtCantCapitulos);
+		
+		formulario.add(new JLabel("Serie a la que pertenece:"));
+		this.cbSeriesGuardadas = cbListaSeriesDisponibles(gestor);
+		formulario.add(this.cbSeriesGuardadas);
 		
 		formulario.add(new JLabel("Fecha de estreno (AAAA-MM-DD):"));
 		JTextField txtFechaEstreno = new JTextField(20);
@@ -340,7 +339,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Nombre:"));
 		JTextField txtNombre = new JTextField(30);
@@ -362,10 +361,6 @@ public class PanelMenuAdd extends JPanel {
 		formulario.add(txtNacionalidad);
 		camposFormulario.put("nacionalidad", txtNacionalidad);
 		
-		formulario.add(new JLabel("Documental en el que participa:"));
-		this.cbDocumentalesGuardados = cbListaDocumentalesDisponibles(gestor);
-		formulario.add(this.cbDocumentalesGuardados);
-		
 		panelCentral.add(formulario);
 	}
 	
@@ -373,7 +368,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Titulo:"));
 		JTextField txtTitulo = new JTextField(30);
@@ -410,7 +405,7 @@ public class PanelMenuAdd extends JPanel {
 		camposFormulario.clear();
 		JPanel formulario = new JPanel();
 		formulario.setLayout(new GridLayout(0, 2, 10, 30));
-		formulario.setBackground(new Color(197, 202, 233));
+		formulario.setBackground(Estilos.COLOR_FONDO_CLARO);
 		
 		formulario.add(new JLabel("Titulo:"));
 		JTextField txtTitulo = new JTextField(30);
@@ -456,17 +451,6 @@ public class PanelMenuAdd extends JPanel {
 			String genero = camposFormulario.get("genero").getText();
 			String estudio = camposFormulario.get("estudio").getText();
 			
-			List <Actor> actoresAsociados = new ArrayList<>();
-			
-			int [] indicesSeleccionados = listaActoresDisponibles.getSelectedIndices();
-			
-			//valida que existan actores disponibles y carga a la lista a aquellos que selecciona el usuario
-			if(this.actoresGuardados != null && !this.actoresGuardados.isEmpty()) {
-				for (int indice : indicesSeleccionados) {
-					actoresAsociados.add(this.actoresGuardados.get(indice));
-				}
-			}
-			
 			//valida que todos los campos esten llenos
 			if(titulo.isBlank() || duracionString.isBlank() || genero.isBlank() || estudio.isBlank()) {
 				JOptionPane.showMessageDialog(this, "Todos los campos deben ser llenados correctamente", "Error en la validación",JOptionPane.ERROR_MESSAGE);
@@ -484,11 +468,6 @@ public class PanelMenuAdd extends JPanel {
 			
 			//comienza la creacion del objeto
 			Pelicula nuevaPeli = new Pelicula(titulo, duracionInt, genero, estudio);
-			
-			//si la lista de actores no se encuentra vacia, entonces los asigna de una vez creando la relacion
-			if(!actoresAsociados.isEmpty()) {
-				nuevaPeli.setActores(actoresAsociados);
-			}
 			
 			gestor.agregarNuevoObj(nuevaPeli);
 			
@@ -602,18 +581,6 @@ public void agregarDocumental() {
 			String nombre = camposFormulario.get("nombre").getText();
 			String apellido = camposFormulario.get("apellido").getText();
 			String nacionalidad = camposFormulario.get("nacionalidad").getText();
-
-			//aqui se almacenaran todas las peliculas seleccionadas para enviar al constructor
-			List <Pelicula> peliculasAsociadas = new ArrayList<>();
-			
-			int [] indicesSeleccionados = this.listaPeliculasDisponibles.getSelectedIndices();
-			
-			//valida que existan peliculas disponibles y carga a la lista a aquellas seleccionadas por el usuario
-			if(this.peliculasGuardadas != null && !this.peliculasGuardadas.isEmpty()) {
-				for (int indice : indicesSeleccionados) {
-					peliculasAsociadas.add(this.peliculasGuardadas.get(indice));
-				}
-			}
 			
 			//valida que todos los campos esten llenos
 			if(nombre.isBlank() || apellido.isBlank() || nacionalidad.isBlank()) {
@@ -623,19 +590,16 @@ public void agregarDocumental() {
 					
 			//aqui inician las conversiones de tipos de datos de acuerdo a lo que pide el constructor
 			//para este objeto no se requiere conversion de datos
-					
+			
 			//comienza la creacion del objeto
 			Actor nuevoActor= new Actor(nombre, apellido, nacionalidad);
 			
-			//si la lista de peliculas no se encuentra vacia, entonces las asigna de una vez creando la relacion
-			if(!peliculasAsociadas.isEmpty()) {
-				nuevoActor.setPeliculas(peliculasAsociadas);
-			}
+			boolean exito = gestor.agregarNuevoObj(nuevoActor);
 			
-			gestor.agregarNuevoObj(nuevoActor);
-					
-			JOptionPane.showMessageDialog(this, "Actor " + nombre.toUpperCase() + " " + apellido.toUpperCase() + " agregado con éxito a la colección.", 
+			if(exito) JOptionPane.showMessageDialog(this, "Actor " + nombre.toUpperCase() + " " + apellido.toUpperCase() + " agregado con éxito a la colección.", 
 					"Tarea exitosa",JOptionPane.INFORMATION_MESSAGE);
+			if(!exito) JOptionPane.showMessageDialog(this, "El actor ya existe, verifique la información e intente nuevamente", 
+					"Advertencia de duplicado",JOptionPane.WARNING_MESSAGE);
 				
 			camposFormulario.values().forEach(campo -> {
 				
@@ -643,9 +607,7 @@ public void agregarDocumental() {
 					campo.setText("");
 				}
 			});
-			
-			this.listaPeliculasDisponibles.clearSelection();
-			
+						
 		} catch (Exception e) {
 			//si la creacion del objeto falla se desplegara un mensaje de error
 			JOptionPane.showMessageDialog(this, "Error al agregar el actor a la colección: " + e.getMessage(), "Falla de sistema.",JOptionPane.ERROR_MESSAGE);
@@ -886,10 +848,8 @@ public void agregarDocumental() {
 	
 	//crea el ComboBox que despliega las opciones de Series que estan disponibles para crear la relacion entre temporadas y series
 	private JComboBox <String> cbListaSeriesDisponibles(GestorContenidos gestor){
-		//se almacenan todas las series disponibles en la lista interna de esta clase
 		this.seriesGuardadas = gestor.obtenerTodos(SerieDeTV.class);
 		
-		//se comprueba la existencia de la serie y se obtienen los titulos para el menu desplegable
 		if(this.seriesGuardadas == null || this.seriesGuardadas.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "No existen series guardadas actualmente. Agregue una serie y vuelva a intentarlo.", 
 					"ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
@@ -898,69 +858,6 @@ public void agregarDocumental() {
 		
 		String [] titulos = this.seriesGuardadas.stream().map(SerieDeTV :: getTitulo).toArray(String[] :: new);
 		return new JComboBox<>(titulos);
-	}
-	
-	//crea el ComboBox que despliega los documentales disponibles para asociarlos con un investigador
-	//los documentales que ya tienen asociado a un investigador no apareceran
-	private JComboBox <String> cbListaDocumentalesDisponibles(GestorContenidos gestor){
-		
-		//se obtiene la lista de documentales e investigadores completa para compararlos
-		List<Investigador> listaInvestigadores = gestor.obtenerTodos(Investigador.class);
-		List<Documental> listaDocumentales = gestor.obtenerTodos(Documental.class);
-		
-		//se filtran los documentales por aquellos que tienen ya asignado un investigador 
-		//se ocupa un SET dada su velocidad para consultas, filtraciones y la imposibilidad de agregar duplicados
-		Set<Documental> documentalesAsignados = listaInvestigadores.stream().filter(i -> i.getDocum() != null)
-				.map(Investigador :: getDocum) //reemplaza los investigadores de la lista por sus respectivos documentales
-				.collect(Collectors.toSet()); //transforma el stream de investigadores a uno de documentales y lo convierte a Set
-		
-		//filtrado de documentales
-		this.documentalesFiltrados = listaDocumentales.stream().filter(docum -> !documentalesAsignados.contains(docum)).collect(Collectors.toList());
-		
-		//se comprueba la existencia de la serie y se obtienen los titulos para el menu desplegable
-		if(this.documentalesFiltrados == null || this.documentalesFiltrados.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "No existen documentales guardados actualmente. Agregue un documental y vuelva a intentarlo.", 
-					"ADVERTENCIA", JOptionPane.WARNING_MESSAGE);
-			return new JComboBox<>(new String[] {"(No existen documentales disponibles actualmente)"});
-		}
-		
-		String [] titulos = this.documentalesFiltrados.stream().map(Documental :: getTitulo).toArray(String[] :: new);
-		return new JComboBox<>(titulos);
-	}
-	
-	//crea la lista de peliculas disponibles para asociarlas con un actor
-	private JList <String> desplegarListaPeliculas(GestorContenidos gestor) {
-		
-		this.peliculasGuardadas = gestor.obtenerTodos(Pelicula.class);
-		
-		if(this.peliculasGuardadas == null || this.peliculasGuardadas.isEmpty()) {
-			
-			String [] mensaje = {"(No existen películas disponibles actualmente)"};
-			return new JList<>(mensaje);
-		}
-		
-		String [] titulos = this.peliculasGuardadas.stream().map(Pelicula :: getTitulo).toArray(String [] :: new);
-		JList <String> lista = new JList <> (titulos);
-		lista.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		return lista;
-	}
-	//crea la lista de actores disponibles para asociarlos con una pelicula
-	private JList <String> desplegarListaActores(GestorContenidos gestor) {
-		
-		this.actoresGuardados = gestor.obtenerTodos(Actor.class);
-		
-		if(this.actoresGuardados == null || this.actoresGuardados.isEmpty()) {
-			
-			String [] mensaje = {"(No existen actores disponibles actualmente)"};
-			return new JList<>(mensaje);
-		}
-		
-		String [] nombres = this.actoresGuardados.stream().map(a -> a.getNombre() + " " + a.getApellido()).toArray(String [] :: new);
-		JList <String> lista = new JList <> (nombres);
-		lista.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		return lista;
 	}
 	
 }
