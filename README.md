@@ -74,4 +74,4 @@ Ejecute el archivo JAR (ej. GESTOR DE CONTENIDO AUDIOVISUAL.jar) haciendo doble 
 
 La aplicación se iniciará desde la clase principal (MainAudioVisual).
 
-Desarrollado como proyecto final para el curso de Programación Orientada a Objetos.
+Desarrollado como proyecto para el curso de Programación Orientada a Objetos.
